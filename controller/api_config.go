@@ -39,10 +39,16 @@ func GetAPIConfig(c *gin.Context) {
 func CreateAPIConfig(c *gin.Context) {
 	var config model.APIConfig
 	if err := c.ShouldBindJSON(&config); err != nil {
-		util.ErrorResponse(c, http.StatusBadRequest, err.Error())
+		fmt.Printf("JSON绑定失败: %v\n", err)
+		fmt.Printf("请求体: %s\n", c.Request.Body)
+		util.ErrorResponse(c, http.StatusBadRequest, "参数格式错误: "+err.Error())
 		return
 	}
+
+	fmt.Printf("接收到的API配置: %+v\n", config)
+
 	if err := service.CreateAPIConfig(&config); err != nil {
+		fmt.Printf("创建API配置失败: %v\n", err)
 		util.ErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}

@@ -22,7 +22,7 @@ type APIConfig struct {
 	UpdatedAt      time.Time      `json:"updated_at"`
 	DeletedAt      gorm.DeletedAt `json:"deleted_at" gorm:"index"`
 	LastTestStatus string         `json:"last_test_status" gorm:"column:last_test_status;size:10;default:'never'"` // 最近一次测试状态 success/fail/never
-	LastTestTime   time.Time      `json:"last_test_time" gorm:"column:last_test_time"`                             // 最近一次测试时间
+	LastTestTime   *time.Time     `json:"last_test_time" gorm:"column:last_test_time"`                             // 最近一次测试时间
 }
 
 func (APIConfig) TableName() string {
