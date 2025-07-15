@@ -1,0 +1,114 @@
+<!-- 仪表板页面 -->
+<div class="container-fluid">
+    <!-- 删除标题行 -->
+    <!-- 统计卡片 -->
+    <div class="row mb-2" style="margin-bottom:8px!important;">
+        <div class="col-xl-3 col-md-6 mb-2">
+            <div class="card" style="background:var(--main-gradient);color:#fff;border-radius:var(--card-radius);box-shadow:var(--card-shadow);">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h4 class="mb-0" id="totalRequests" style="font-weight:600;font-size:2rem;">0</h4>
+                            <p class="mb-0" style="opacity:0.9;">总请求数</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="bi bi-arrow-up-circle fs-1" style="opacity:0.8;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-2">
+            <div class="card" style="background:linear-gradient(135deg, #10b981 0%, #34d399 100%);color:#fff;border-radius:var(--card-radius);box-shadow:var(--card-shadow);">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h4 class="mb-0" id="successRequests" style="font-weight:600;font-size:2rem;">0</h4>
+                            <p class="mb-0" style="opacity:0.9;">成功请求</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="bi bi-check-circle fs-1" style="opacity:0.8;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-2">
+            <div class="card" style="background:linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);color:#fff;border-radius:var(--card-radius);box-shadow:var(--card-shadow);">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h4 class="mb-0" id="errorRequests" style="font-weight:600;font-size:2rem;">0</h4>
+                            <p class="mb-0" style="opacity:0.9;">错误请求</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="bi bi-exclamation-triangle fs-1" style="opacity:0.8;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-2">
+            <div class="card" style="background:linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);color:#fff;border-radius:var(--card-radius);box-shadow:var(--card-shadow);">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h4 class="mb-0" id="avgResponseTime" style="font-weight:600;font-size:2rem;">0ms</h4>
+                            <p class="mb-0" style="opacity:0.9;">平均响应时间</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="bi bi-speedometer2 fs-1" style="opacity:0.8;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <!-- 最近请求 -->
+        <div class="col-12 mb-2">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0" style="font-size:1.1rem;font-weight:600;">最近请求</h5>
+                    <button class="btn btn-outline-primary" onclick="refreshRecentRequests()">
+                        <i class="bi bi-arrow-clockwise"></i> 刷新
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>时间</th>
+                                    <th>API</th>
+                                    <th>方法</th>
+                                    <th>路径</th>
+                                    <th>状态</th>
+                                    <th>响应时间</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recentRequestsTable">
+                                <!-- 最近请求数据将在这里动态加载 -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- API状态 -->
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0" style="font-size:1.1rem;font-weight:600;">API状态</h5>
+                </div>
+                <div class="card-body">
+                    <div id="apiStatusList">
+                        <!-- API状态列表将在这里动态加载 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
