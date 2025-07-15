@@ -910,6 +910,22 @@
   - 403：权限不足
   - 405：方法不允许 
 
+# 2024-12-19T20:00:00Z
+
+## 移除请求日志功能
+
+### 变更说明
+- 应产品需求，彻底移除“请求日志”相关的所有功能，包括：
+  - 前端 request-logs.html 页面、request-logs.js 脚本、logs.css 样式、主逻辑中所有相关代码
+  - 后端 request_log.go 相关的 model、repository、service、controller 文件
+  - 路由中 /admin/logs 相关接口
+  - 数据库不再包含 request_logs 表
+- 其他功能（API配置、统计、管理后台安全等）全部保留且不受影响
+
+### 影响评估
+- 用户和管理员均无法再查看、导出、清空API请求日志
+- 其他功能完全正常
+
 # AI-PROXY 开发日志
 
 ## 2024-12-19 10:30:00 UTC

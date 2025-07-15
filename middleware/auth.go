@@ -17,7 +17,7 @@ func AdminAuth() gin.HandlerFunc {
 			return
 		}
 		token := strings.TrimPrefix(authHeader, "Bearer ")
-		if token != "123456" {
+		if token != "Ghj20000107...1qaz@WSX" {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Token无效"})
 			c.Abort()
 			return

@@ -15,7 +15,7 @@ func InitDB(database *gorm.DB) {
 	db = database
 
 	// 只进行自动迁移，不删除现有表，保留历史数据
-	database.AutoMigrate(&model.APIConfig{}, &model.RequestLog{}, &model.DailyStatistics{})
+	database.AutoMigrate(&model.APIConfig{})
 }
 
 // 查询所有api配置

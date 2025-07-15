@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
 	"strings"
@@ -39,16 +38,14 @@ func GetAPIConfig(c *gin.Context) {
 func CreateAPIConfig(c *gin.Context) {
 	var config model.APIConfig
 	if err := c.ShouldBindJSON(&config); err != nil {
-		fmt.Printf("JSON绑定失败: %v\n", err)
-		fmt.Printf("请求体: %s\n", c.Request.Body)
 		util.ErrorResponse(c, http.StatusBadRequest, "参数格式错误: "+err.Error())
 		return
 	}
-
-	fmt.Printf("接收到的API配置: %+v\n", config)
-
+	if config.Name == "" || config.BaseURL == "" {
+		util.ErrorResponse(c, http.StatusBadRequest, "API名称和基址URL为必填项")
+		return
+	}
 	if err := service.CreateAPIConfig(&config); err != nil {
-		fmt.Printf("创建API配置失败: %v\n", err)
 		util.ErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
@@ -61,6 +58,7 @@ func UpdateAPIConfig(c *gin.Context) {
 	var config model.APIConfig
 	if err := c.ShouldBindJSON(&config); err != nil {
 		util.BadRequestResponse(c, "参数格式错误："+err.Error())
+		return
 	}
 	if err := service.UpdateAPIConfig(name, &config); err != nil {
 		util.ErrorResponse(c, http.StatusBadRequest, err.Error())
@@ -94,7 +92,9 @@ type APITestResponse struct {
 }
 
 func TestAPIConfig(c *gin.Context) {
-	var req APITestRequest
+	var req struct {
+		Name string `json:"name"`
+	}
 	if err := c.ShouldBindJSON(&req); err != nil {
 		util.ErrorResponse(c, http.StatusBadRequest, "参数格式错误: "+err.Error())
 		return
@@ -107,190 +107,43 @@ func TestAPIConfig(c *gin.Context) {
 		return
 	}
 
-	// 使用配置的BaseURL进行简单测试
+	// 自动补全协议
 	url := apiConfig.BaseURL
-	// 尝试常见的API端点路径
-	commonPaths := []string{
-		"/v1/chat/completions", // OpenAI格式
-		"/v1/completions",      // OpenAI旧格式
-		"/chat/completions",    // 简化格式
-		"/completions",         // 最简化格式
-		"/",                    // 根路径
+	if !strings.HasPrefix(url, "http://") && !strings.HasPrefix(url, "https://") {
+		url = "http://" + url
 	}
 
-	// 构建请求头
-	headers := map[string]string{}
-	if apiConfig.Headers != "" {
-		_ = json.Unmarshal([]byte(apiConfig.Headers), &headers)
+	client := &http.Client{Timeout: 10 * time.Second}
+	reqTest, reqErr := http.NewRequest("GET", url, nil)
+	if reqErr != nil {
+		util.ErrorResponse(c, http.StatusBadRequest, "创建请求失败")
+		return
 	}
-
-	// 添加认证信息
-	if apiConfig.AuthType == "bearer" && apiConfig.AuthValue != "" {
-		headers["Authorization"] = "Bearer " + apiConfig.AuthValue
-	}
-	if apiConfig.AuthType == "api_key" && apiConfig.AuthValue != "" {
-		headers["X-API-Key"] = apiConfig.AuthValue
-	}
-	if apiConfig.AuthType == "basic" && apiConfig.AuthValue != "" {
-		headers["Authorization"] = "Basic " + apiConfig.AuthValue
-	}
-
-	// 尝试多个常见路径进行测试
-	testBody := `{"test": "api_config_test", "timestamp": "` + time.Now().Format("2006-01-02 15:04:05") + `"}`
-
-	var resp *http.Response
-	var duration int64
-	var testedURL string
-	var foundValidEndpoint bool
-
-	timeout := apiConfig.Timeout
-	if timeout <= 0 {
-		timeout = 10 // 默认10秒超时
-	}
-	client := &http.Client{Timeout: time.Duration(timeout) * time.Second}
-
-	// 尝试每个路径
-	for _, path := range commonPaths {
-		testURL := strings.TrimRight(url, "/") + path
-		fmt.Printf("尝试测试路径: %s\n", testURL)
-
-		httpReq, reqErr := http.NewRequest("POST", testURL, strings.NewReader(testBody))
-		if reqErr != nil {
-			continue
-		}
-
-		// 设置请求头
-		for k, v := range headers {
-			httpReq.Header.Set(k, v)
-		}
-		httpReq.Header.Set("Content-Type", "application/json")
-
-		start := time.Now()
-		currentResp, currentErr := client.Do(httpReq)
-		currentDuration := time.Since(start).Milliseconds()
-
-		fmt.Printf("测试路径 %s - 状态码: %d, 错误: %v\n", testURL,
-			func() int {
-				if currentResp != nil {
-					return currentResp.StatusCode
-				}
-				return 0
-			}(), currentErr)
-
-		if currentErr == nil && currentResp.StatusCode >= 200 && currentResp.StatusCode < 400 {
-			// 找到有效的端点
-			resp = currentResp
-			duration = currentDuration
-			testedURL = testURL
-			foundValidEndpoint = true
-			fmt.Printf("找到可用的API端点: %s\n", testURL)
-			break
-		} else {
-			// 记录最后一个错误，但继续尝试
-			if currentResp != nil {
-				resp = currentResp
-				duration = currentDuration
-				testedURL = testURL
-			}
-			if currentResp != nil {
-				currentResp.Body.Close()
-			}
-		}
-	}
-
-	// 记录请求日志
-	headersJSON, _ := json.Marshal(headers)
-	logErr := service.SaveRequestLog(&model.RequestLog{
-		APIName:        req.Name,
-		RequestMethod:  "POST",
-		RequestPath:    testedURL,
-		RequestHeaders: string(headersJSON),
-		RequestBody:    testBody,
-		ResponseStatus: func() int {
-			if resp != nil {
-				return resp.StatusCode
-			}
-			return 0 // 网络错误
-		}(),
-		ResponseTime: int(duration),
-		ErrorMessage: func() string {
-			if !foundValidEndpoint && resp != nil {
-				return fmt.Sprintf("状态码: %d", resp.StatusCode)
-			}
-			return ""
-		}(),
-		UserIP:    c.ClientIP(),
-		UserAgent: c.Request.UserAgent(),
-		CreatedAt: time.Now(),
-	})
-
-	if logErr != nil {
-		fmt.Printf("记录请求日志失败: %v\n", logErr)
-	}
-
-	// 如果没有找到有效端点，返回失败结果
-	if !foundValidEndpoint {
-		// 更新统计数据 - 失败情况
-		updateErr := service.UpdateDailyStatistics(req.Name, time.Now(), 0, duration)
-		if updateErr != nil {
-			fmt.Printf("更新统计数据失败: %v\n", updateErr)
-		}
-
-		// 更新API测试状态为fail
-		_ = service.UpdateAPITestStatus(req.Name, "fail", time.Now().UnixMilli())
-
-		// 判断具体的错误类型
-		var errorMsg string
-		if resp != nil {
-			switch resp.StatusCode {
-			case 404:
-				errorMsg = "API地址可访问，但所有测试路径都返回404（请检查API端点路径是否正确）"
-			case 401:
-				errorMsg = "API地址可访问，但认证失败（请检查API Key或Token是否正确）"
-			case 403:
-				errorMsg = "API地址可访问，但权限不足（请检查API Key权限）"
-			case 405:
-				errorMsg = "API地址可访问，但不支持POST方法（请检查API端点是否正确）"
-			default:
-				errorMsg = fmt.Sprintf("API响应异常，状态码: %d", resp.StatusCode)
-			}
-		} else {
-			errorMsg = "API地址无法访问，请检查网络连接和URL配置"
-		}
-
+	start := time.Now()
+	resp, err := client.Do(reqTest)
+	duration := time.Since(start).Milliseconds()
+	if err != nil {
 		util.SuccessResponse(c, gin.H{
-			"success": false,
-			"status": func() int {
-				if resp != nil {
-					return resp.StatusCode
-				}
-				return 0
-			}(),
+			"success":       false,
+			"status":        0,
 			"response_time": duration,
-			"error":         errorMsg,
-			"message":       "API配置测试失败",
+			"error":         err.Error(),
+			"message":       "API地址无法访问: " + err.Error(),
 		})
 		return
 	}
 	defer resp.Body.Close()
 
-	// 更新统计数据 - 成功情况
-	updateErr := service.UpdateDailyStatistics(req.Name, time.Now(), resp.StatusCode, duration)
-	if updateErr != nil {
-		fmt.Printf("更新统计数据失败: %v\n", updateErr)
+	success := resp.StatusCode >= 200 && resp.StatusCode < 400
+	msg := "API地址可访问"
+	if !success {
+		msg = "API地址无法访问，状态码: " + fmt.Sprint(resp.StatusCode)
 	}
-
-	// 更新API测试状态为success
-	_ = service.UpdateAPITestStatus(req.Name, "success", time.Now().UnixMilli())
-
-	// 成功情况
-	message := fmt.Sprintf("API配置测试成功，找到可用端点: %s", testedURL)
-
 	util.SuccessResponse(c, gin.H{
-		"success":       true,
+		"success":       success,
 		"status":        resp.StatusCode,
 		"response_time": duration,
 		"error":         "",
-		"message":       message,
+		"message":       msg,
 	})
 }

@@ -1,28 +1,60 @@
-<div class="row mb-2">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="card-title mb-0">API配置管理</h5>
-                <button class="btn btn-primary" data-action="showAddAPIModal">
-                    <i class="bi bi-plus-circle"></i> 添加API
-                </button>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API配置管理</title>
+    <link href="../css/main.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        .api-table th, .api-table td { vertical-align: middle; }
+        .api-table th { background: #f8fafc; }
+        .api-table .status-enabled { color: #10b981; font-weight: 600; }
+        .api-table .btn { margin-right: 4px; }
+        .modal-header { background: #f8fafc; border-bottom: 1px solid #e5e7eb; }
+        .modal-footer { border-top: 1px solid #e5e7eb; }
+        .form-label { font-weight: 500; }
+    </style>
+</head>
+<body>
+<div class="d-flex">
+    <!-- 侧边栏 -->
+    <nav id="sidebar" style="width:220px;min-height:100vh;background:#fff;border-right:1px solid #f0f0f0;">
+        <div class="d-flex align-items-center justify-content-center mb-4" style="height:48px;">
+            <span class="navbar-brand" style="font-size:1.3rem;color:#2563eb;"><i class="bi bi-gear-fill me-2"></i>AI-PROXY</span>
+        </div>
+        <ul class="components" style="list-style:none;padding-left:0;">
+            <li class="active" style="background:#f1f5ff;border-radius:8px;margin:0 12px 8px 12px;">
+                <a href="#" style="color:#2563eb;font-weight:600;display:flex;align-items:center;padding:10px 16px;">
+                    <i class="bi bi-gear me-2"></i>
+                    <span>API配置</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <!-- 主内容区 -->
+    <div class="flex-grow-1" style="background:#f8fafc;min-height:100vh;padding:32px 0;">
+        <div class="container" style="max-width:1100px;">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3 style="font-weight:600;">API配置管理</h3>
+                <button class="btn btn-primary" onclick="showAddAPIModal()"><i class="bi bi-plus-circle me-1"></i>添加API</button>
             </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle">
-                        <thead class="table-light">
+            <div class="card shadow-sm" style="border-radius:16px;">
+                <div class="card-body p-4">
+                    <table class="table api-table mb-0">
+                        <thead>
                             <tr>
-                                <th style="width: 12%;">名称</th>
-                                <th style="width: 25%;">基础URL</th>
-                                <th style="width: 10%;">认证类型</th>
-                                <th style="width: 8%;">超时时间</th>
-                                <th style="width: 8%;">状态</th>
-                                <th style="width: 20%;">描述</th>
-                                <th style="width: 17%;">操作</th>
+                                <th>名称</th>
+                                <th>基址URL</th>
+                                <th>状态</th>
+                                <th>描述</th>
+                                <th>测试结果</th>
+                                <th>操作</th>
                             </tr>
                         </thead>
-                        <tbody id="apiConfigTable">
-                            <!-- API配置数据将在这里动态加载 -->
+                        <tbody id="apiConfigTableBody">
+                            <!-- 动态渲染API配置行 -->
                         </tbody>
                     </table>
                 </div>
@@ -30,101 +62,46 @@
         </div>
     </div>
 </div>
-
-<!-- 添加/编辑API模态框 -->
-<div class="modal fade" id="apiModal" tabindex="-1">
+<!-- 添加/编辑API配置弹窗 -->
+<div class="modal fade" id="apiConfigModal" tabindex="-1">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="apiModalTitle">添加API配置</h5>
+                <h5 class="modal-title" id="apiConfigModalTitle">添加API配置</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <form id="apiForm">
-                    <div class="row">
+                <form id="apiConfigForm">
+                    <div class="row g-3">
                         <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="apiName" class="form-label">API名称 *</label>
-                                <input type="text" class="form-control" id="apiName" required>
-                                <div class="form-text">唯一标识符，如：openai、claude等</div>
-                            </div>
+                            <label class="form-label">API名称 *</label>
+                            <input type="text" class="form-control" id="apiName" required placeholder="唯一标识，如：openai、claude等">
                         </div>
                         <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="apiBaseURL" class="form-label">基础URL *</label>
-                                <input type="url" class="form-control" id="apiBaseURL" required>
-                                <div class="form-text">API的基础地址，如：https://api.openai.com</div>
-                            </div>
+                            <label class="form-label">基址URL *</label>
+                            <input type="text" class="form-control" id="baseUrl" required placeholder="API的基础地址，如：https://api.openai.com">
                         </div>
-                    </div>
-                    
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="authType" class="form-label">认证类型</label>
-                                <select class="form-select" id="authType">
-                                    <option value="bearer">Bearer Token</option>
-                                    <option value="api_key">API Key</option>
-                                    <option value="basic">Basic Auth</option>
-                                    <option value="none">无认证</option>
-                                </select>
-                            </div>
+                        <div class="col-12">
+                            <label class="form-label">描述</label>
+                            <input type="text" class="form-control" id="description" placeholder="">
                         </div>
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="authValue" class="form-label">认证值</label>
-                                <input type="password" class="form-control" id="authValue">
-                                <div class="form-text">API密钥或令牌</div>
+                        <div class="col-12">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="enabled" checked>
+                                <label class="form-check-label" for="enabled">启用此API配置</label>
                             </div>
-                        </div>
-                    </div>
-                    
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="timeout" class="form-label">超时时间（秒）</label>
-                                <input type="number" class="form-control" id="timeout" value="30" min="1" max="300">
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="rateLimit" class="form-label">速率限制</label>
-                                <input type="number" class="form-control" id="rateLimit" value="0" min="0">
-                                <div class="form-text">0表示无限制</div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="headers" class="form-label">自定义请求头</label>
-                        <textarea class="form-control" id="headers" rows="3" placeholder='{"Content-Type": "application/json"}'></textarea>
-                        <div class="form-text">JSON格式的自定义请求头</div>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="description" class="form-label">描述</label>
-                        <textarea class="form-control" id="description" rows="2"></textarea>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="isActive" checked>
-                            <label class="form-check-label" for="isActive">
-                                启用此API配置
-                            </label>
                         </div>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-                <button type="button" class="btn btn-primary" data-action="saveAPIConfig">保存</button>
+                <button type="button" class="btn btn-primary" onclick="saveAPIConfig()">保存</button>
             </div>
         </div>
     </div>
 </div>
-
-<!-- API测试模态框 -->
+<!-- API配置测试弹窗 -->
 <div class="modal fade" id="apiTestModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -133,35 +110,24 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <div class="text-center">
-                    <p class="mb-3">将测试API配置的有效性，包括：</p>
-                    <ul class="text-start">
-                        <li>API地址是否可访问</li>
-                        <li>认证信息是否正确</li>
-                        <li>POST请求是否支持</li>
-                        <li>请求头是否有效</li>
-                    </ul>
-                    <p class="text-muted">注意：使用POST请求测试，更接近实际使用场景。如需完整API测试请使用Postman等专业工具</p>
-                </div>
-                <div id="apiTestResult" class="mt-3" style="display:none;">
-                    <h6>测试结果</h6>
-                    <div class="alert" id="apiTestResultAlert"></div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <strong>状态码：</strong><span id="testStatusCode"></span>
-                        </div>
-                        <div class="col-md-6">
-                            <strong>响应时间：</strong><span id="testResponseTime"></span>
-                        </div>
-                    </div>
-                </div>
+                <p>将测试API配置的有效性，包括：</p>
+                <ul>
+                    <li>API地址是否可访问</li>
+                    <li>认证信息是否正确</li>
+                    <li>POST请求是否支持</li>
+                    <li>请求头是否有效</li>
+                </ul>
+                <div class="alert alert-info small">注意：使用POST请求测试，更接近实际使用场景。如需完整API测试请使用Postman等专业工具。</div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
-                <button type="button" class="btn btn-success" id="sendApiTestBtn">开始测试</button>
+                <button type="button" class="btn btn-primary" onclick="startAPITest()">开始测试</button>
             </div>
         </div>
     </div>
 </div>
-
-<!-- 移除原有的<script>标签和JS，所有功能已合并到main.js -->
+<!-- 这里可引入自定义JS实现表格渲染、弹窗控制、API交互等 -->
+<script src="../js/api-config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

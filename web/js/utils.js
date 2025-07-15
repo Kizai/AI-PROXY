@@ -140,10 +140,8 @@ window.login = async function login() {
         }
 
         console.log('登录成功，开始加载仪表板');
-        
-        // 加载仪表板
-        loadPage('dashboard');
-
+        // 加载API配置页面
+        loadPage('api-config');
         showSuccess('登录成功');
     } catch (error) {
         console.error('登录失败:', error);
