@@ -7,10 +7,11 @@ import (
 )
 
 // config系统配置结构
+// Config结构体去除APIs字段
 type Config struct {
-	Server   ServerConfig               `json:"server"`
-	Database DatabaseConfig             `json:"database"`
-	APIs     map[string]ConfigAPIConfig `json:"apis"`
+	Server   ServerConfig   `json:"server"`
+	Database DatabaseConfig `json:"database"`
+	Log      LogConfig      `json:"log"`
 }
 
 // 服务器配置
@@ -29,17 +30,6 @@ type DatabaseConfig struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
 	Database string `json:"database"`
-}
-
-// ConfigAPIConfig 配置文件中的API配置
-type ConfigAPIConfig struct {
-	BaseURL     string            `json:"base_url"`
-	Headers     map[string]string `json:"headers"`
-	AuthType    string            `json:"auth_type"`
-	AuthValue   string            `json:"auth_value"`
-	Timeout     int               `json:"timeout"`
-	RateLimit   int               `json:"rate_limit"`
-	Description string            `json:"description"`
 }
 
 // LogConfig 日志配置

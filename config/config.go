@@ -12,6 +12,7 @@ type Config struct {
 	Database DatabaseConfig       `json:"database"`
 	Log      LogConfig            `json:"log"`
 	APIs     map[string]APIConfig `json:"apis"`
+	Auth     AuthConfig           `json:"auth"`
 }
 
 // ServerConfig 服务器配置
@@ -53,6 +54,11 @@ type APIConfig struct {
 	Description string            `json:"description"`
 }
 
+// AuthConfig 管理员认证配置
+type AuthConfig struct {
+	Token string `json:"token"`
+}
+
 // LoadConfig 加载配置文件
 func LoadConfig(configPath string) (*Config, error) {
 	// 读取配置文件
@@ -69,3 +75,6 @@ func LoadConfig(configPath string) (*Config, error) {
 
 	return &config, nil
 }
+
+// 全局配置变量，供全项目访问
+var GlobalConfig *Config

@@ -47,7 +47,7 @@ func UpdateAPIConfig(name string, config *model.APIConfig) error {
 
 // 删除API配置
 func DeleteAPIConfig(name string) error {
-	return db.Where("name=?", name).Delete(&model.APIConfig{}).Error
+	return db.Unscoped().Where("name=?", name).Delete(&model.APIConfig{}).Error
 }
 
 // GetActiveAPICount 获取活跃API配置数量

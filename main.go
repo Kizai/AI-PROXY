@@ -20,6 +20,8 @@ import (
 	"gorm.io/gorm"
 )
 
+var GlobalConfig *config.Config
+
 func main() {
 	//1、解析命令行参数
 	configPath := flag.String("config", "config.json", "配置文件路径")
@@ -30,9 +32,12 @@ func main() {
 	if err != nil {
 		log.Fatalf("加载配置失败：%v", err)
 	}
+	config.GlobalConfig = cfg
 
 	//3、初始化日志
-	util.InitLogger()
+	if err := util.InitLogger(&cfg.Log); err != nil {
+		log.Printf("日志文件打开失败，将只输出到控制台: %v", err)
+	}
 
 	//4、连接数据库
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local",

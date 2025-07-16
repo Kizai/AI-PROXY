@@ -21,40 +21,7 @@
       "max_age": 30,
       "compress": true
     },
-    "apis": {
-      "openai": {
-        "base_url": "https://api.openai.com",
-        "headers": {
-          "Content-Type": "application/json"
-        },
-        "auth_type": "bearer",
-        "auth_value": "your_openai_api_key",
-        "timeout": 60,
-        "rate_limit": 0,
-        "description": "OpenAI API"
-      },
-      "claude-openai": {
-        "base_url": "https://api.anthropic.com",
-        "headers": {
-        "Content-Type": "application/json"
-        },
-     "auth_type": "bearer",
-     "auth_value": "your_claude_api_key",
-     "timeout": 60,
-     "rate_limit": 0,
-     "description": "Claude API (OpenAI协议兼容)"
-    },
-    "claude-native": {
-     "base_url": "https://api.anthropic.com",
-     "headers": {
-     "Content-Type": "application/json",
-     "anthropic-version": "2023-06-01"
-  },
-  "auth_type": "bearer",
-  "auth_value": "your_claude_api_key",
-  "timeout": 60,
-  "rate_limit": 0,
-  "description": "Claude API (原生协议)"
-}
+    "auth": {
+      "token": "your_admin_token_here"
     }
   } 

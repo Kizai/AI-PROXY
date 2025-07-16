@@ -1,43 +1,38 @@
 package util
 
 import (
+	"io"
 	"os"
+
+	"AI-PROXY/config"
 
 	"github.com/sirupsen/logrus"
 )
 
 var Logger *logrus.Logger
 
-// InitLogger 初始化日志
-func InitLogger() error {
+// InitLogger 初始化日志，支持同时输出到控制台和文件
+func InitLogger(logConfig *config.LogConfig) error {
 	Logger = logrus.New()
-
-	// 设置日志级别
-	level, err := logrus.ParseLevel("info")
+	level, err := logrus.ParseLevel(logConfig.Level)
 	if err != nil {
 		level = logrus.InfoLevel
 	}
 	Logger.SetLevel(level)
-
-	// 设置日志格式
 	Logger.SetFormatter(&logrus.JSONFormatter{
 		TimestampFormat: "2006-01-02 15:04:05",
 	})
 
-	// 设置日志输出到控制台
-	Logger.SetOutput(os.Stdout)
-
+	// 打开日志文件
+	file, err := os.OpenFile(logConfig.FilePath, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+	if err != nil {
+		Logger.SetOutput(os.Stdout)
+		return err
+	}
+	// 同时输出到控制台和文件
+	mw := io.MultiWriter(os.Stdout, file)
+	Logger.SetOutput(mw)
 	return nil
-}
-
-// 记录日志信息
-func LogInfo(message string, fields logrus.Fields) {
-	Logger.WithFields(fields).Info(message)
-}
-
-// 记录错误日志
-func LogError(message string, fields logrus.Fields) {
-	Logger.WithFields(fields).Error(message)
 }
 
 // 记录请求日志

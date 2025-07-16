@@ -5,6 +5,8 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
+
+	"AI-PROXY/config"
 )
 
 // 管理员认证中间件
@@ -17,7 +19,7 @@ func AdminAuth() gin.HandlerFunc {
 			return
 		}
 		token := strings.TrimPrefix(authHeader, "Bearer ")
-		if token != "Ghj20000107...1qaz@WSX" {
+		if config.GlobalConfig == nil || token != config.GlobalConfig.Auth.Token {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Token无效"})
 			c.Abort()
 			return
