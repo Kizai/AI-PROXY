@@ -1,10 +1,10 @@
 package controller
 
 import (
-	"fmt"
 	"net/http"
+	"net/url"
+	"os/exec"
 	"strings"
-	"time"
 
 	"AI-PROXY/model"
 	"AI-PROXY/service"
@@ -107,43 +107,42 @@ func TestAPIConfig(c *gin.Context) {
 		return
 	}
 
-	// 自动补全协议
-	url := apiConfig.BaseURL
-	if !strings.HasPrefix(url, "http://") && !strings.HasPrefix(url, "https://") {
-		url = "http://" + url
+	// 提取base_url中的域名
+	host := ""
+	parsed, err := url.Parse(apiConfig.BaseURL)
+	if err == nil && parsed.Host != "" {
+		host = parsed.Host
+	} else {
+		// 没有协议前缀时，直接用base_url
+		host = apiConfig.BaseURL
+	}
+	// 去掉端口
+	if idx := strings.Index(host, ":"); idx > 0 {
+		host = host[:idx]
 	}
 
-	client := &http.Client{Timeout: 10 * time.Second}
-	reqTest, reqErr := http.NewRequest("GET", url, nil)
-	if reqErr != nil {
-		util.ErrorResponse(c, http.StatusBadRequest, "创建请求失败")
+	// 执行ping命令
+	cmd := exec.Command("ping", "-c", "1", host)
+	output, err := cmd.CombinedOutput()
+	if err == nil {
+		// ping通
+		util.SuccessResponse(c, gin.H{
+			"success":       true,
+			"status":        0,
+			"response_time": 0,
+			"error":         "",
+			"message":       "ping成功，可访问\n" + string(output),
+		})
 		return
-	}
-	start := time.Now()
-	resp, err := client.Do(reqTest)
-	duration := time.Since(start).Milliseconds()
-	if err != nil {
+	} else {
+		// ping不通
 		util.SuccessResponse(c, gin.H{
 			"success":       false,
 			"status":        0,
-			"response_time": duration,
+			"response_time": 0,
 			"error":         err.Error(),
-			"message":       "API地址无法访问: " + err.Error(),
+			"message":       "ping失败，不可访问\n" + string(output),
 		})
 		return
 	}
-	defer resp.Body.Close()
-
-	success := resp.StatusCode >= 200 && resp.StatusCode < 400
-	msg := "API地址可访问"
-	if !success {
-		msg = "API地址无法访问，状态码: " + fmt.Sprint(resp.StatusCode)
-	}
-	util.SuccessResponse(c, gin.H{
-		"success":       success,
-		"status":        resp.StatusCode,
-		"response_time": duration,
-		"error":         "",
-		"message":       msg,
-	})
 }
