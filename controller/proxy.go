@@ -34,6 +34,11 @@ func ForwardRequest(c *gin.Context) {
 		util.ErrorResponse(c, http.StatusNotFound, "API配置不存在: "+apiName)
 		return
 	}
+	// 新增：未启用的API禁止访问
+	if !apiConfig.Active {
+		util.ErrorResponse(c, http.StatusForbidden, "该API已被禁用")
+		return
+	}
 
 	// 控制台调试输出
 	fmt.Printf("代理请求 - API名称: %s\n", apiName)

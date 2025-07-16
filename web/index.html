@@ -40,11 +40,28 @@
                 <li>（可后台自定义添加/下线）</li>
             </ul>
             <h4 class="mt-4">调用示例</h4>
-            <pre><code>curl -X POST http://你的代理域名/openai/v1/chat/completions \
-  -H "Authorization: Bearer sk-你的key" \
-  -H "Content-Type: application/json" \
-  -d '{"model": "gpt-3.5-turbo", "messages": [{"role": "user", "content": "你好"}]}'
-            </code></pre>
+            <div class="api-demo-controls mb-3" style="display:flex;gap:12px;">
+              <select id="vendor-select" class="api-demo-select">
+                <option value="openai">OpenAI</option>
+                <option value="azure">Azure</option>
+                <option value="grok">Grok</option>
+                <option value="gemini">Gemini</option>
+              </select>
+              <select id="lang-select" class="api-demo-select">
+                <option value="python">Python</option>
+                <option value="nodejs">Node.js</option>
+                <option value="curl">cURL</option>
+              </select>
+            </div>
+            <div class="code-editor-frame">
+              <div class="editor-dots">
+                <span class="editor-dot red"></span>
+                <span class="editor-dot yellow"></span>
+                <span class="editor-dot green"></span>
+              </div>
+              <pre id="api-demo-code" class="language-python"><code></code></pre>
+              <button id="copy-demo-btn" class="copy-btn" title="复制代码"><i class="bi bi-clipboard"></i>复制</button>
+            </div>
             <h4 class="mt-4">常见问题 FAQ</h4>
             <ul>
                 <li>Q: 如何填写API Key？<br>A: 只需在你自己的程序或工具里填写，不要告诉平台。</li>

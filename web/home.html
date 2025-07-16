@@ -3,80 +3,196 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI-PROXY 首页</title>
+    <title>AI-PROXY API代理平台</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
     <link href="css/main.css" rel="stylesheet">
     <style>
-        .card-section { margin-bottom: 32px; border-radius: 16px; box-shadow: 0 2px 16px 0 rgba(0,0,0,0.06); }
-        .card-section .card-header { background: var(--main-gradient,#2563eb); color: #fff; border-radius: 16px 16px 0 0; font-size: 1.2rem; font-weight: 600; }
-        .card-section .card-body { background: #fff; border-radius: 0 0 16px 16px; }
-        .faq-list li { margin-bottom: 16px; }
+        body { background: #f8fafc; font-family: 'Inter', '微软雅黑', Arial, sans-serif; }
+        .main-header {
+            text-align: center;
+            margin-top: 60px;
+            margin-bottom: 40px;
+        }
+        .main-header .logo {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #2563eb;
+            letter-spacing: 2px;
+        }
+        .main-header .slogan {
+            color: #64748b;
+            font-size: 1.2rem;
+            margin-top: 12px;
+        }
+        .card-section { margin-bottom: 32px; border-radius: 18px; box-shadow: 0 2px 16px 0 rgba(37,99,235,0.08); border: none; }
+        .card-section .card-header { background: linear-gradient(90deg,#2563eb 60%,#60a5fa 100%); color: #fff; border-radius: 18px 18px 0 0; font-size: 1.15rem; font-weight: 600; letter-spacing: 1px; }
+        .card-section .card-body { background: #fff; border-radius: 0 0 18px 18px; }
+        .faq-list li { margin-bottom: 18px; }
         .faq-q { color: #2563eb; font-weight: 600; }
-        .faq-a { color: #333; margin-left: 8px; }
+        .faq-a { color: #334155; margin-left: 8px; }
+        .api-demo code { color: #2563eb; font-size: 1.05rem; }
+        @media (max-width: 600px) {
+            .main-header { margin-top: 32px; margin-bottom: 24px; }
+            .container { padding: 0 8px; }
+        }
     </style>
 </head>
 <body>
-    <!-- 侧边栏，仅首页菜单 -->
-    <nav id="sidebar">
-        <div class="d-flex align-items-center justify-content-center mb-4" style="height:48px;">
-            <span class="navbar-brand" style="font-size:1.3rem;"><i class="bi bi-house-fill me-2"></i>AI-PROXY</span>
-        </div>
-        <ul class="components">
-            <li class="active">
-                <a href="#">
-                    <i class="bi bi-house"></i>
-                    <span>首页</span>
-                </a>
-            </li>
-        </ul>
-    </nav>
-    <!-- 主内容区 -->
-    <div id="main-content">
-        <nav class="navbar">
-            <span class="navbar-brand d-none d-md-block"><i class="bi bi-house-fill me-2"></i>AI-PROXY 首页</span>
-        </nav>
-        <div class="container" style="max-width:900px; margin-top:40px;">
-            <div class="card card-section mb-4">
-                <div class="card-header"><i class="bi bi-info-circle me-2"></i>AI代理服务说明</div>
-                <div class="card-body">
-                    <p style="font-size:1.1rem;">欢迎使用 <b>AI-PROXY</b>！本平台为开发者和企业提供统一的AI API代理服务，无需注册、无需登录，直接通过下方接口即可调用。</p>
-                </div>
-            </div>
-            <div class="card card-section mb-4">
-                <div class="card-header"><i class="bi bi-robot me-2"></i>支持的AI服务</div>
-                <div class="card-body">
-                    <ul class="mb-0" style="font-size:1.05rem;">
-                        <li>OpenAI（如 <code>/openai/v1/chat/completions</code>）</li>
-                        <li>Claude</li>
-                        <li>Grok</li>
-                        <li>OpenKey</li>
-                        <li>（可后台自定义添加/下线）</li>
-                    </ul>
-                </div>
-            </div>
-            <div class="card card-section mb-4">
-                <div class="card-header"><i class="bi bi-terminal me-2"></i>调用示例</div>
-                <div class="card-body">
-                    <pre style="background:#f8fafc;border-radius:8px;padding:16px;"><code>curl -X POST http://你的代理域名/openai/v1/chat/completions \
-  -H "Authorization: Bearer sk-你的key" \
-  -H "Content-Type: application/json" \
-  -d '{"model": "gpt-3.5-turbo", "messages": [{"role": "user", "content": "你好"}]}'
-                    </code></pre>
-                </div>
-            </div>
-            <div class="card card-section mb-4">
-                <div class="card-header"><i class="bi bi-question-circle me-2"></i>常见问题 FAQ</div>
-                <div class="card-body">
-                    <ul class="faq-list" style="list-style:none;padding-left:0;">
-                        <li><span class="faq-q">Q: 如何填写API Key？</span><span class="faq-a">只需在你自己的程序或工具里填写，不要告诉平台。</span></li>
-                        <li><span class="faq-q">Q: 平台会保存我的Key吗？</span><span class="faq-a">不会，平台不收集、不保存用户API Key。</span></li>
-                        <li><span class="faq-q">Q: 如何添加/下线AI服务？</span><span class="faq-a">由管理员在后台配置，前端自动展示。</span></li>
-                        <li><span class="faq-q">Q: 管理后台怎么进？</span><span class="faq-a">普通用户无法看到管理后台入口。</span></li>
-                    </ul>
-                </div>
-            </div>
-        </div>
+    <div class="main-header">
+        <div class="logo"><i class="bi bi-lightning-charge-fill me-2"></i>AI-PROXY</div>
+        <div class="slogan">极简 · 安全 · 极速的AI API代理平台</div>
     </div>
+    <div class="container" style="max-width:900px;">
+        <div class="card card-section mb-4">
+            <div class="card-header"><i class="bi bi-info-circle me-2"></i>平台简介</div>
+            <div class="card-body">
+                <p style="font-size:1.1rem;">欢迎使用 <b>AI-PROXY</b>！本平台为开发者和企业提供统一的AI API代理服务，支持各大厂商，解决本地或服务器无法请求到对端的问题，无需注册、无需登录，直接替换官网URL为下方接口名称即可调用。</p>
+            </div>
+        </div>
+        <div class="card card-section mb-4">
+            <div class="card-header"><i class="bi bi-robot me-2"></i>支持的AI服务</div>
+            <div class="card-body">
+                <ul class="mb-0" style="font-size:1.05rem;">
+                    <li><b>OpenAI</b>（原 <code>https://<b>openai.com</b>/v1/chat/completions</code> 替换为 <code>https://<b>aceproxy.xyz/openai</b>/v1/chat/completions</code>）</li>
+                    <li><b>Claude</b>（原 <code>https://<b>api.anthropic.com</b>/v1/claude/generate</code> 替换为 <code>https://<b>aceproxy.xyz/claude</b>/v1/claude/generate</code>）</li>
+                    <li><b>Gemini</b>（原 <code>https://<b>generativelanguage.googleapis.com</b>/v1beta/models/gemini-pro:generateContent</code> 替换为 <code>https://<b>aceproxy.xyz/gemini</b>/v1beta/models/gemini-pro:generateContent</code>）</li>
+                    <li><b>Grok</b>（原 <code>https://<b>api.x.ai</b>/v1/chat/completions</code> 替换为 <code>https://<b>aceproxy.xyz/grok</b>/v1/chat/completions</code>）</li>
+                    <li><b>Poixe</b>（原 <code>https://<b>poixe.com</b>/v1/chat/completions</code> 替换为 <code>https://<b>aceproxy.xyz/poixe</b>/v1/chat/completions</code>）</li>
+                    <li>（更多厂商接入请联系站长）</li>
+                </ul>
+            </div>
+        </div>
+        <div class="card card-section mb-4">
+            <div class="card-header api-demo-header d-flex align-items-center justify-content-between">
+                <span><i class="bi bi-terminal me-2"></i>API调用示例</span>
+                <select id="demo-select" class="api-demo-select">
+                  <option value="openai-python">OpenAI · Python</option>
+                  <option value="openai-curl">OpenAI · cURL</option>
+                  <option value="openai-nodejs">OpenAI · Node.js</option>
+                  <option value="claude-python">Claude · Python</option>
+                  <option value="claude-curl">Claude · cURL</option>
+                  <option value="claude-nodejs">Claude · Node.js</option>
+                  <option value="grok-python">Grok · Python</option>
+                  <option value="grok-curl">Grok · cURL</option>
+                  <option value="grok-nodejs">Grok · Node.js</option>
+                  <option value="Poixe-python">Poixe · Python</option>
+                  <option value="Poixe-curl">Poixe · cURL</option>
+                  <option value="Poixe-nodejs">Poixe · Node.js</option>
+                </select>
+            </div>
+            <div class="card-body api-demo position-relative">
+                <button id="copy-demo-btn" class="copy-btn" title="复制" type="button" aria-label="复制代码">
+                  <svg width="18" height="18" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="5" y="7" width="9" height="10" rx="2" fill="currentColor" fill-opacity="0.13"/><rect x="7" y="3" width="9" height="10" rx="2" stroke="currentColor" stroke-width="1.5"/></svg>
+                  <span>复制</span>
+                </button>
+                <div class="code-editor-frame">
+                  <div class="editor-dots">
+                    <span class="editor-dot red"></span>
+                    <span class="editor-dot yellow"></span>
+                    <span class="editor-dot green"></span>
+                  </div>
+                  <pre class="mb-0"><code id="demo-code" class="language-python"></code></pre>
+                </div>
+            </div>
+        </div>
+        <div class="card card-section mb-4">
+            <div class="card-header"><i class="bi bi-question-circle me-2"></i>常见问题 FAQ</div>
+            <div class="card-body">
+                <ul class="faq-list" style="list-style:none;padding-left:0;">
+                    <li><span class="faq-q">Q: 如何使用？</span><span class="faq-a">只需在你自己的程序或工具里将接口域名替换成“本域名/模型厂商”即可</span></li>
+                    <li><span class="faq-q">Q: 平台会保存我的Key吗？</span><span class="faq-a">不会，平台不收集、不保存用户API Key。</span></li>
+                    <li><span class="faq-q">Q: 如何添加/下线AI服务？</span><span class="faq-a">由管理员在后台配置</span></li>
+                    <li><span class="faq-q">Q: 管理后台怎么进？</span><span class="faq-a">普通用户无法看到管理后台入口，如个人部署，/admin进入</span></li>
+                    <li><span class="faq-q">Q: 我需要添加AI服务商怎么做？</span><span class="faq-a">请将需要代理的接口域名和名称发送至站长邮箱：support@gptocean.com</span></li>
+                </ul>
+            </div>
+        </div>
+        <div class="text-center text-muted mb-4" style="font-size:0.98rem;">© 2024 AI-PROXY · Powered by Go + Gin + Bootstrap</div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-bash.min.js"></script>
+    <script>
+    const codeMap = {
+      'openai-python': { code: `import requests\nurl = \"https://aceproxy.xyz/openai/v1/chat/completions\"\nheaders = {\"Content-Type\": \"application/json\", \"Authorization\": \"Bearer sk-xxx\"}\ndata = {\n  \"model\": \"gpt-3.5-turbo\",\n  \"messages\": [{\"role\": \"user\", \"content\": \"你好\"}]\n}\nresponse = requests.post(url, headers=headers, json=data)\nprint(response.json())`, lang: 'python' },
+      'openai-curl': { code: `curl -X POST https://aceproxy.xyz/openai/v1/chat/completions \\\n  -H \"Authorization: Bearer sk-xxx\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{"model": "gpt-3.5-turbo", "messages": [{"role": "user", "content": "你好"}]}'`, lang: 'bash' },
+      'openai-nodejs': { code: `const axios = require('axios');\nconst res = await axios.post('https://aceproxy.xyz/openai/v1/chat/completions', {\n  model: 'gpt-3.5-turbo',\n  messages: [{ role: 'user', content: '你好' }]\n}, {\n  headers: {\n    'Authorization': 'Bearer sk-xxx',\n    'Content-Type': 'application/json'\n  }\n});\nconsole.log(res.data);`, lang: 'javascript' },
+      'claude-python': { code: `import requests\nurl = \"https://aceproxy.xyz/claude/v1/claude/generate\"\nheaders = {\"Content-Type\": \"application/json\", \"x-api-key\": \"sk-xxx\"}\ndata = {\n  \"model\": \"claude-3-opus-20240229\",\n  \"messages\": [{\"role\": \"user\", \"content\": \"Hello!\"}]\n}\nresponse = requests.post(url, headers=headers, json=data)\nprint(response.json())`, lang: 'python' },
+      'claude-curl': { code: `curl -X POST https://aceproxy.xyz/claude/v1/claude/generate \\\n  -H \"x-api-key: sk-xxx\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{"model": "claude-3-opus-20240229", "messages": [{"role": "user", "content": "Hello!"}]}'`, lang: 'bash' },
+      'claude-nodejs': { code: `const axios = require('axios');\nconst res = await axios.post('https://aceproxy.xyz/claude/v1/claude/generate', {\n  model: 'claude-3-opus-20240229',\n  messages: [{ role: 'user', content: 'Hello!' }]\n}, {\n  headers: {\n    'x-api-key': 'sk-xxx',\n    'Content-Type': 'application/json'\n  }\n});\nconsole.log(res.data);`, lang: 'javascript' },
+      'grok-python': { code: `import requests\nurl = \"https://aceproxy.xyz/grok/v1/chat/completions\"\nheaders = {\"Content-Type\": \"application/json\", \"Authorization\": \"Bearer sk-xxx\"}\ndata = {\n  \"model\": \"grok-1\",\n  \"messages\": [{\"role\": \"user\", \"content\": \"你好\"}]\n}\nresponse = requests.post(url, headers=headers, json=data)\nprint(response.json())`, lang: 'python' },
+      'grok-curl': { code: `curl -X POST https://aceproxy.xyz/grok/v1/chat/completions \\\n  -H \"Authorization: Bearer sk-xxx\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{"model": "grok-1", "messages": [{"role": "user", "content": "你好"}]}'`, lang: 'bash' },
+      'grok-nodejs': { code: `const axios = require('axios');\nconst res = await axios.post('https://aceproxy.xyz/grok/v1/chat/completions', {\n  model: 'grok-1',\n  messages: [{ role: 'user', content: '你好' }]\n}, {\n  headers: {\n    'Authorization': 'Bearer sk-xxx',\n    'Content-Type': 'application/json'\n  }\n});\nconsole.log(res.data);`, lang: 'javascript' },
+      'poixe-python': { code: `import requests\nurl = \"https://openkey.cloud/v1/chat/completions\"\nheaders = {\"Content-Type\": \"application/json\", \"Authorization\": \"Bearer sk-xxx\"}\ndata = {\n  \"model\": \"openkey-1\",\n  \"messages\": [{\"role\": \"user\", \"content\": \"你好\"}]\n}\nresponse = requests.post(url, headers=headers, json=data)\nprint(response.json())`, lang: 'python' },
+      'poixe-curl': { code: `curl -X POST https://openkey.cloud/v1/chat/completions \\\n  -H \"Authorization: Bearer sk-xxx\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{"model": "openkey-1", "messages": [{"role": "user", "content": "你好"}]}'`, lang: 'bash' },
+      'poixe-nodejs': { code: `const axios = require('axios');\nconst res = await axios.post('https://openkey.cloud/v1/chat/completions', {\n  model: 'openkey-1',\n  messages: [{ role: 'user', content: '你好' }]\n}, {\n  headers: {\n    'Authorization': 'Bearer sk-xxx',\n    'Content-Type': 'application/json'\n  }\n});\nconsole.log(res.data);`, lang: 'javascript' },
+    };
+    function updateDemoCode() {
+      const val = document.getElementById('demo-select').value;
+      const { code, lang } = codeMap[val];
+      const codeEl = document.getElementById('demo-code');
+      codeEl.textContent = code;
+      codeEl.className = 'language-' + lang;
+      Prism.highlightElement(codeEl);
+    }
+    document.getElementById('demo-select').onchange = updateDemoCode;
+    document.getElementById('copy-demo-btn').onclick = function() {
+      const code = document.getElementById('demo-code').textContent;
+      const button = this;
+      const originalContent = button.innerHTML;
+      
+      // 兼容性处理：优先使用现代API，降级到传统方法
+      const copyToClipboard = async (text) => {
+        try {
+          // 现代浏览器：使用navigator.clipboard API
+          if (navigator.clipboard && window.isSecureContext) {
+            await navigator.clipboard.writeText(text);
+            return true;
+          } else {
+            // 降级方案：使用传统方法
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-999999px';
+            textArea.style.top = '-999999px';
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            const successful = document.execCommand('copy');
+            document.body.removeChild(textArea);
+            return successful;
+          }
+        } catch (err) {
+          console.error('复制失败:', err);
+          return false;
+        }
+      };
+      
+      copyToClipboard(code).then(success => {
+        if (success) {
+          // 更新按钮文本为"已复制"
+          button.innerHTML = `
+            <svg width="18" height="18" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="5" y="7" width="9" height="10" rx="2" fill="currentColor" fill-opacity="0.13"/>
+              <rect x="7" y="3" width="9" height="10" rx="2" stroke="currentColor" stroke-width="1.5"/>
+            </svg>
+            <span>已复制</span>
+          `;
+          
+          // 1.2秒后恢复原文本
+          setTimeout(() => {
+            button.innerHTML = originalContent;
+          }, 1200);
+        } else {
+          // 复制失败时的处理
+          alert('复制失败，请手动选择代码复制');
+        }
+      });
+    };
+    // 初始化
+    updateDemoCode();
+    </script>
 </body>
 </html> 

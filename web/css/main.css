@@ -260,6 +260,209 @@ code {
   border: none;
 }
 
+/* ========== 代码演示区块美化 ========== */
+.api-demo {
+  background: #23272e;
+  border-radius: 14px;
+  box-shadow: 0 2px 12px rgba(37,99,235,0.08);
+  padding: 0;
+  position: relative;
+}
+.api-demo pre {
+  background: none;
+  color: #fff;
+  border-radius: 0 0 14px 14px;
+  margin: 0;
+  padding: 22px 20px 18px 20px;
+  font-size: 1.08rem;
+  font-family: 'Fira Mono', 'Menlo', 'Consolas', monospace;
+  overflow-x: auto;
+  border: none;
+}
+.api-demo code {
+  background: none;
+  color: inherit;
+  font-size: 1.08rem;
+  font-family: inherit;
+  padding: 0;
+  border-radius: 0;
+}
+.api-demo .copy-btn, #copy-demo-btn {
+  background: #fff;
+  color: #23272e;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 14px 6px 10px;
+  font-size: 1rem;
+  font-weight: 500;
+  box-shadow: 0 1px 6px rgba(37,99,235,0.10);
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: background 0.18s, color 0.18s, box-shadow 0.18s;
+}
+.api-demo .copy-btn:hover, #copy-demo-btn:hover {
+  background: #2563eb;
+  color: #fff;
+  box-shadow: 0 2px 12px rgba(37,99,235,0.18);
+}
+.api-demo .copy-btn svg, #copy-demo-btn i {
+  font-size: 1.1em;
+}
+.api-demo-header, .card-section .card-header.d-flex {
+  background: linear-gradient(90deg,#2563eb 60%,#60a5fa 100%);
+  color: #fff;
+  border-radius: 14px 14px 0 0;
+  font-size: 1.08rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  padding: 16px 20px 12px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.api-demo-tabs {
+  display: flex;
+  gap: 8px;
+}
+.api-demo-tabs .tab, #demo-model, #demo-lang {
+  background: none;
+  border: none;
+  color: #e0e7ef;
+  padding: 5px 18px;
+  border-radius: 8px;
+  margin-right: 0;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 1rem;
+  transition: background 0.2s, color 0.2s;
+}
+.api-demo-tabs .tab.active, #demo-model:focus, #demo-lang:focus, #demo-model option:checked, #demo-lang option:checked {
+  background: #2563eb;
+  color: #fff;
+}
+.api-demo-tabs .tab:hover, #demo-model:hover, #demo-lang:hover {
+  background: #3b82f6;
+  color: #fff;
+}
+@media (max-width: 600px) {
+  .api-demo pre { padding: 14px 6px 12px 6px; font-size: 0.98rem; }
+  .api-demo .copy-btn, #copy-demo-btn { top: 8px; right: 8px; padding: 5px 10px 5px 8px; font-size: 0.95rem; }
+  .api-demo-header, .card-section .card-header.d-flex { padding: 10px 8px 8px 8px; font-size: 0.98rem; }
+}
+
+/* 编辑器风格代码区块 */
+.code-editor-frame {
+  background: #23272e;
+  border-radius: 14px;
+  box-shadow: 0 4px 24px rgba(37,99,235,0.10);
+  padding: 0;
+  position: relative;
+  margin-top: 0;
+  margin-bottom: 0;
+  overflow: hidden;
+}
+.code-editor-frame::before {
+  content: '';
+  display: block;
+  height: 36px;
+  background: #22262e;
+  border-radius: 14px 14px 0 0;
+  position: absolute;
+  left: 0; top: 0; right: 0;
+  z-index: 1;
+}
+.code-editor-frame .editor-dots {
+  position: absolute;
+  left: 18px;
+  top: 12px;
+  z-index: 2;
+  display: flex;
+  gap: 7px;
+}
+.code-editor-frame .editor-dot {
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  display: inline-block;
+}
+.code-editor-frame .editor-dot.red { background: #ff5f56; }
+.code-editor-frame .editor-dot.yellow { background: #ffbd2e; }
+.code-editor-frame .editor-dot.green { background: #27c93f; }
+.code-editor-frame pre {
+  background: none;
+  color: #fff;
+  border-radius: 0 0 14px 14px;
+  margin: 0;
+  padding: 38px 22px 20px 22px;
+  font-size: 1.08rem;
+  font-family: 'Fira Mono', 'Menlo', 'Consolas', monospace;
+  overflow-x: auto;
+  border: none;
+  min-height: 180px;
+  position: relative;
+  z-index: 2;
+}
+.code-editor-frame code {
+  background: none;
+  color: inherit;
+  font-size: 1.08rem;
+  font-family: inherit;
+  padding: 0;
+  border-radius: 0;
+}
+.api-demo-select {
+  border: 1.5px solid #2563eb;
+  border-radius: 8px;
+  padding: 6px 18px;
+  font-size: 1rem;
+  color: #23272e;
+  background: #fff;
+  font-weight: 500;
+  margin-left: 18px;
+  transition: border 0.2s, box-shadow 0.2s;
+  outline: none;
+  box-shadow: none;
+}
+.api-demo-select:focus, .api-demo-select:hover {
+  border-color: #60a5fa;
+  box-shadow: 0 0 0 2px #2563eb22;
+}
+.api-demo .copy-btn, #copy-demo-btn {
+  background: #fff;
+  color: #23272e;
+  border: 1.5px solid #2563eb;
+  border-radius: 8px;
+  padding: 6px 14px 6px 10px;
+  font-size: 1rem;
+  font-weight: 500;
+  box-shadow: 0 1px 6px rgba(37,99,235,0.10);
+  position: absolute;
+  top: 18px;
+  right: 22px;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: background 0.18s, color 0.18s, box-shadow 0.18s, border 0.18s;
+}
+.api-demo .copy-btn:hover, #copy-demo-btn:hover {
+  background: #2563eb;
+  color: #fff;
+  border-color: #2563eb;
+  box-shadow: 0 2px 12px rgba(37,99,235,0.18);
+}
+.api-demo .copy-btn svg, #copy-demo-btn svg {
+  font-size: 1.1em;
+}
+@media (max-width: 600px) {
+  .code-editor-frame pre { padding: 32px 6px 12px 6px; font-size: 0.98rem; }
+  .api-demo .copy-btn, #copy-demo-btn { top: 10px; right: 8px; padding: 5px 10px 5px 8px; font-size: 0.95rem; }
+}
+
 /* 响应式 */
 @media (max-width: 900px) {
   #sidebar {
@@ -297,4 +500,13 @@ code {
 ::-webkit-scrollbar-thumb {
   background: #e0e7ff;
   border-radius: 8px;
+}
+
+.api-demo-controls {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+@media (max-width: 600px) {
+  .api-demo-controls { flex-direction: column; gap: 8px; }
 }

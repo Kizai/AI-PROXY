@@ -13,13 +13,44 @@ window.request = async function request(url, options = {}) {
     try {
         const response = await fetch(`${API_BASE_URL}${url}`, { ...defaultOptions, ...options });
 
+        if (response.status === 401) {
+            // Token无效，清除本地token并显示登录模态框
+            localStorage.removeItem('admin_token');
+            showError("访问令牌已失效，请重新登录");
+            showTokenModal();
+            throw new Error("访问令牌已失效");
+        }
+        
+        if (response.status === 403) {
+            showError("权限不足，无法访问此功能");
+            throw new Error("权限不足");
+        }
+        
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            const errorText = await response.text();
+            let errorMessage = `请求失败: ${response.status}`;
+            try {
+                const errorJson = JSON.parse(errorText);
+                if (errorJson.error) {
+                    errorMessage = errorJson.error;
+                }
+            } catch (e) {
+                // 如果解析JSON失败，使用原始错误文本
+                if (errorText) {
+                    errorMessage = errorText;
+                }
+            }
+            showError(errorMessage);
+            throw new Error(errorMessage);
         }
         
         return await response.json();
     } catch (error) {
         console.error('请求失败', error);
+        // 如果是网络错误或其他非HTTP错误，显示通用错误信息
+        if (!error.message.includes('访问令牌已失效') && !error.message.includes('权限不足')) {
+            showError('网络请求失败，请检查网络连接');
+        }
         throw error;
     }
  }
@@ -84,8 +115,8 @@ window.showTokenModal = function showTokenModal() {
     
     const tokenInput = document.getElementById('token');
     if (tokenInput) {
-        tokenInput.placeholder = '请输入访问令牌 (默认: 123456)';
-        tokenInput.value = '123456'; // 设置默认值为123456
+        tokenInput.placeholder = '请输入访问令牌';
+        tokenInput.value = ''; // 不自动填充，保持为空
     }
     
     // 显示模态框 - 使用正确的Bootstrap 5语法
@@ -116,9 +147,28 @@ window.login = async function login() {
     }
 
     try {
-        console.log('用户登录，token:', token);
+        console.log('用户登录，验证token:', token);
         
-        // 保存token（不验证，直接保存）
+        // 先验证token是否正确
+        const testResponse = await fetch('/admin/api-config', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        
+        if (testResponse.status === 401) {
+            showError("访问令牌错误，请检查后重试");
+            return;
+        }
+        
+        if (!testResponse.ok) {
+            showError(`验证失败: ${testResponse.status} - ${testResponse.statusText}`);
+            return;
+        }
+        
+        // 验证成功，保存token
         localStorage.setItem('admin_token', token);
 
         // 关闭模态框
@@ -139,7 +189,7 @@ window.login = async function login() {
             console.error('关闭模态框失败:', error);
         }
 
-        console.log('登录成功，开始加载仪表板');
+        console.log('登录成功，开始加载API配置页面');
         // 加载API配置页面
         loadPage('api-config');
         showSuccess('登录成功');
