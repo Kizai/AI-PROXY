@@ -3,6 +3,14 @@
 ## 项目简介
 AI-PROXY 是一个开箱即用的 AI API 代理平台，支持多家主流 AI 厂商（如 OpenAI、Claude、Gemini、Grok 等），让你可以用自己的服务器统一转发和管理所有 AI API 请求。
 
+<img width="1931" height="778" alt="QQ_1752766224004" src="https://github.com/user-attachments/assets/6fd2cae0-d715-4671-9ef0-a44b62c486b7" />
+
+<img width="1955" height="777" alt="QQ_1752766255971" src="https://github.com/user-attachments/assets/62bafa27-2cd6-4f61-9854-eefc1bf7c97f" />
+
+<img width="1964" height="555" alt="QQ_1752766115130" src="https://github.com/user-attachments/assets/c2eff4ef-2551-441e-b1f2-854e978351ab" />
+
+
+
 - 支持多厂商、多模型
 - 无需注册、无需登录，直接用
 - 管理后台可动态添加/删除/禁用 API
