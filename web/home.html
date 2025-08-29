@@ -73,6 +73,9 @@
                   <option value="claude-python">Claude · Python</option>
                   <option value="claude-curl">Claude · cURL</option>
                   <option value="claude-nodejs">Claude · Node.js</option>
+                  <option value="gemini-python">Gemini · Python</option>
+                  <option value="gemini-curl">Gemini · cURL</option>
+                  <option value="gemini-nodejs">Gemini · Node.js</option>
                   <option value="grok-python">Grok · Python</option>
                   <option value="grok-curl">Grok · cURL</option>
                   <option value="grok-nodejs">Grok · Node.js</option>
@@ -100,7 +103,7 @@
             <div class="card-header"><i class="bi bi-question-circle me-2"></i>常见问题 FAQ</div>
             <div class="card-body">
                 <ul class="faq-list" style="list-style:none;padding-left:0;">
-                    <li><span class="faq-q">Q: 如何使用？</span><span class="faq-a">只需在你自己的程序或工具里将接口域名替换成“本域名/模型厂商”即可</span></li>
+                    <li><span class="faq-q">Q: 如何使用？</span><span class="faq-a">只需在你自己的程序或工具里将接口域名替换成"本域名/模型厂商"即可</span></li>
                     <li><span class="faq-q">Q: 平台会保存我的Key吗？</span><span class="faq-a">不会，平台不收集、不保存用户API Key。</span></li>
                     <li><span class="faq-q">Q: 如何添加/下线AI服务？</span><span class="faq-a">由管理员在后台配置</span></li>
                     <li><span class="faq-q">Q: 管理后台怎么进？</span><span class="faq-a">普通用户无法看到管理后台入口，如个人部署，/admin进入</span></li>
@@ -117,16 +120,19 @@
     <script>
     const codeMap = {
       'openai-python': { code: `import requests\nurl = \"https://aceproxy.xyz/openai/v1/chat/completions\"\nheaders = {\"Content-Type\": \"application/json\", \"Authorization\": \"Bearer sk-xxx\"}\ndata = {\n  \"model\": \"gpt-3.5-turbo\",\n  \"messages\": [{\"role\": \"user\", \"content\": \"你好\"}]\n}\nresponse = requests.post(url, headers=headers, json=data)\nprint(response.json())`, lang: 'python' },
-      'openai-curl': { code: `curl -X POST https://aceproxy.xyz/openai/v1/chat/completions \\\n  -H \"Authorization: Bearer sk-xxx\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{"model": "gpt-3.5-turbo", "messages": [{"role": "user", "content": "你好"}]}'`, lang: 'bash' },
+      'openai-curl': { code: `curl -X POST https://aceproxy.xyz/openai/v1/chat/completions \\\\\n  -H \"Authorization: Bearer sk-xxx\" \\\\\n  -H \"Content-Type: application/json\" \\\\\n  -d '{\"model\": \"gpt-3.5-turbo\", \"messages\": [{\"role\": \"user\", \"content\": \"你好\"}]}'`, lang: 'bash' },
       'openai-nodejs': { code: `const axios = require('axios');\nconst res = await axios.post('https://aceproxy.xyz/openai/v1/chat/completions', {\n  model: 'gpt-3.5-turbo',\n  messages: [{ role: 'user', content: '你好' }]\n}, {\n  headers: {\n    'Authorization': 'Bearer sk-xxx',\n    'Content-Type': 'application/json'\n  }\n});\nconsole.log(res.data);`, lang: 'javascript' },
       'claude-python': { code: `import requests\nurl = \"https://aceproxy.xyz/claude/v1/claude/generate\"\nheaders = {\"Content-Type\": \"application/json\", \"x-api-key\": \"sk-xxx\"}\ndata = {\n  \"model\": \"claude-3-opus-20240229\",\n  \"messages\": [{\"role\": \"user\", \"content\": \"Hello!\"}]\n}\nresponse = requests.post(url, headers=headers, json=data)\nprint(response.json())`, lang: 'python' },
-      'claude-curl': { code: `curl -X POST https://aceproxy.xyz/claude/v1/claude/generate \\\n  -H \"x-api-key: sk-xxx\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{"model": "claude-3-opus-20240229", "messages": [{"role": "user", "content": "Hello!"}]}'`, lang: 'bash' },
+      'claude-curl': { code: `curl -X POST https://aceproxy.xyz/claude/v1/claude/generate \\\\\n  -H \"x-api-key: sk-xxx\" \\\\\n  -H \"Content-Type: application/json\" \\\\\n  -d '{\"model\": \"claude-3-opus-20240229\", \"messages\": [{\"role\": \"user\", \"content\": \"Hello!\"}]}'`, lang: 'bash' },
       'claude-nodejs': { code: `const axios = require('axios');\nconst res = await axios.post('https://aceproxy.xyz/claude/v1/claude/generate', {\n  model: 'claude-3-opus-20240229',\n  messages: [{ role: 'user', content: 'Hello!' }]\n}, {\n  headers: {\n    'x-api-key': 'sk-xxx',\n    'Content-Type': 'application/json'\n  }\n});\nconsole.log(res.data);`, lang: 'javascript' },
+      'gemini-python': { code: `import requests\nimport json\n\nurl = \"https://aceproxy.xyz/gemini/v1beta/models/gemini-2.5-flash:generateContent\"\n\npayload = json.dumps({\n  \"contents\": [{\n    \"parts\": [{\n      \"text\": \"请用一句话介绍一下什么是量子计算？\"\n    }]\n  }]\n})\nheaders = {\n  'Content-Type': 'application/json',\n  'Authorization': 'Bearer YOUR_API_KEY'\n}\n\nresponse = requests.request(\"POST\", url, headers=headers, data=payload)\nprint(response.text)`, lang: 'python' },
+      'gemini-curl': { code: `curl -X POST \"https://aceproxy.xyz/gemini/v1beta/models/gemini-2.5-flash:generateContent\" \\\\\n  -H \"Authorization: Bearer YOUR_API_KEY\" \\\\\n  -H \"Content-Type: application/json\" \\\\\n  -d '{\"contents\": [{\"parts\": [{\"text\": \"请用一句话介绍一下什么是量子计算？\"}]}]}'`, lang: 'bash' },
+      'gemini-nodejs': { code: `const axios = require('axios');\n\nconst url = 'https://aceproxy.xyz/gemini/v1beta/models/gemini-2.5-flash:generateContent';\n\nconst payload = {\n  contents: [{\n    parts: [{\n      text: '请用一句话介绍一下什么是量子计算？'\n    }]\n  }]\n};\n\nconst headers = {\n  'Content-Type': 'application/json',\n  'Authorization': 'Bearer YOUR_API_KEY'\n};\n\nconst response = await axios.post(url, payload, { headers });\nconsole.log(response.data);`, lang: 'javascript' },
       'grok-python': { code: `import requests\nurl = \"https://aceproxy.xyz/grok/v1/chat/completions\"\nheaders = {\"Content-Type\": \"application/json\", \"Authorization\": \"Bearer sk-xxx\"}\ndata = {\n  \"model\": \"grok-1\",\n  \"messages\": [{\"role\": \"user\", \"content\": \"你好\"}]\n}\nresponse = requests.post(url, headers=headers, json=data)\nprint(response.json())`, lang: 'python' },
-      'grok-curl': { code: `curl -X POST https://aceproxy.xyz/grok/v1/chat/completions \\\n  -H \"Authorization: Bearer sk-xxx\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{"model": "grok-1", "messages": [{"role": "user", "content": "你好"}]}'`, lang: 'bash' },
+      'grok-curl': { code: `curl -X POST https://aceproxy.xyz/grok/v1/chat/completions \\\\\n  -H \"Authorization: Bearer sk-xxx\" \\\\\n  -H \"Content-Type: application/json\" \\\\\n  -d '{\"model\": \"grok-1\", \"messages\": [{\"role\": \"user\", \"content\": \"你好\"}]}'`, lang: 'bash' },
       'grok-nodejs': { code: `const axios = require('axios');\nconst res = await axios.post('https://aceproxy.xyz/grok/v1/chat/completions', {\n  model: 'grok-1',\n  messages: [{ role: 'user', content: '你好' }]\n}, {\n  headers: {\n    'Authorization': 'Bearer sk-xxx',\n    'Content-Type': 'application/json'\n  }\n});\nconsole.log(res.data);`, lang: 'javascript' },
       'poixe-python': { code: `import requests\nurl = \"https://openkey.cloud/v1/chat/completions\"\nheaders = {\"Content-Type\": \"application/json\", \"Authorization\": \"Bearer sk-xxx\"}\ndata = {\n  \"model\": \"openkey-1\",\n  \"messages\": [{\"role\": \"user\", \"content\": \"你好\"}]\n}\nresponse = requests.post(url, headers=headers, json=data)\nprint(response.json())`, lang: 'python' },
-      'poixe-curl': { code: `curl -X POST https://openkey.cloud/v1/chat/completions \\\n  -H \"Authorization: Bearer sk-xxx\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{"model": "openkey-1", "messages": [{"role": "user", "content": "你好"}]}'`, lang: 'bash' },
+      'poixe-curl': { code: `curl -X POST https://openkey.cloud/v1/chat/completions \\\\\n  -H \"Authorization: Bearer sk-xxx\" \\\\\n  -H \"Content-Type: application/json\" \\\\\n  -d '{\"model\": \"openkey-1\", \"messages\": [{\"role\": \"user\", \"content\": \"你好\"}]}'`, lang: 'bash' },
       'poixe-nodejs': { code: `const axios = require('axios');\nconst res = await axios.post('https://openkey.cloud/v1/chat/completions', {\n  model: 'openkey-1',\n  messages: [{ role: 'user', content: '你好' }]\n}, {\n  headers: {\n    'Authorization': 'Bearer sk-xxx',\n    'Content-Type': 'application/json'\n  }\n});\nconsole.log(res.data);`, lang: 'javascript' },
     };
     function updateDemoCode() {
@@ -195,4 +201,4 @@
     updateDemoCode();
     </script>
 </body>
-</html> 
+</html>

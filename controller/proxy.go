@@ -22,9 +22,15 @@ func ForwardRequest(c *gin.Context) {
 	// 获取 API 名称和路径
 	apiName := c.Param("apiName")
 	path := c.Param("path")
+	
+	// 重要：保留原始查询参数
+	if c.Request.URL.RawQuery != "" {
+		path = path + "?" + c.Request.URL.RawQuery
+	}
 
 	fmt.Printf("解析的API名称: %s\n", apiName)
 	fmt.Printf("解析的路径: %s\n", path)
+	fmt.Printf("原始查询参数: %s\n", c.Request.URL.RawQuery)
 
 	// 移除requestLog相关的定义、赋值、所有service.SaveRequestLog调用及相关逻辑
 
@@ -55,19 +61,33 @@ func ForwardRequest(c *gin.Context) {
 
 	// 特殊处理Gemini API的认证方式
 	if apiName == "gemini" {
-		// 从Authorization头中提取API Key并添加到URL查询参数
-		authHeader := c.GetHeader("Authorization")
-		if authHeader != "" {
-			// 支持 "Bearer API_KEY" 或 "API_KEY" 格式
-			apiKey := strings.TrimPrefix(authHeader, "Bearer ")
-			apiKey = strings.TrimSpace(apiKey)
+		fmt.Printf("🔍 Gemini特殊处理 - 原始targetURL: %s\n", targetURL)
+		
+		// 检查URL中是否已经包含key参数
+		if !strings.Contains(targetURL, "key=") {
+			fmt.Printf("🔍 URL中未包含key参数，尝试从Authorization头提取\n")
+			// 从Authorization头中提取API Key并添加到URL查询参数
+			authHeader := c.GetHeader("Authorization")
+			fmt.Printf("🔍 Authorization头: %s\n", authHeader)
 			
-			// 添加key参数到URL
-			separator := "?"
-			if strings.Contains(targetURL, "?") {
-				separator = "&"
+			if authHeader != "" {
+				// 支持 "Bearer API_KEY" 或 "API_KEY" 格式
+				apiKey := strings.TrimPrefix(authHeader, "Bearer ")
+				apiKey = strings.TrimSpace(apiKey)
+				fmt.Printf("🔍 提取的API Key: %s\n", apiKey)
+				
+				// 添加key参数到URL
+				separator := "?"
+				if strings.Contains(targetURL, "?") {
+					separator = "&"
+				}
+				targetURL = targetURL + separator + "key=" + apiKey
+				fmt.Printf("🔍 添加key后的targetURL: %s\n", targetURL)
+			} else {
+				fmt.Printf("❌ 未找到Authorization头\n")
 			}
-			targetURL = targetURL + separator + "key=" + apiKey
+		} else {
+			fmt.Printf("✅ URL中已包含key参数，直接使用\n")
 		}
 	}
 
