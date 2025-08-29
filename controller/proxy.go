@@ -53,6 +53,24 @@ func ForwardRequest(c *gin.Context) {
 		targetURL = "https://" + targetURL
 	}
 
+	// 特殊处理Gemini API的认证方式
+	if apiName == "gemini" {
+		// 从Authorization头中提取API Key并添加到URL查询参数
+		authHeader := c.GetHeader("Authorization")
+		if authHeader != "" {
+			// 支持 "Bearer API_KEY" 或 "API_KEY" 格式
+			apiKey := strings.TrimPrefix(authHeader, "Bearer ")
+			apiKey = strings.TrimSpace(apiKey)
+			
+			// 添加key参数到URL
+			separator := "?"
+			if strings.Contains(targetURL, "?") {
+				separator = "&"
+			}
+			targetURL = targetURL + separator + "key=" + apiKey
+		}
+	}
+
 	// 添加调试日志
 	fmt.Printf("代理请求 - API名称: %s\n", apiName)
 	fmt.Printf("代理请求 - 原始路径: %s\n", path)
@@ -70,6 +88,10 @@ func ForwardRequest(c *gin.Context) {
 	headers := make(map[string]string)
 	for key, values := range c.Request.Header {
 		if len(values) > 0 {
+			// 对于Gemini API，跳过Authorization头，因为我们已经将其转换为URL参数
+			if apiName == "gemini" && strings.ToLower(key) == "authorization" {
+				continue
+			}
 			headers[key] = values[0]
 		}
 	}
